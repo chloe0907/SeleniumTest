@@ -1,6 +1,7 @@
 from test_wework.index import Index
+from test_wework.basepage import BasePage
 
-class TestContacts:
+class TestContacts():
 
     def setup(self):
         self.index = Index()
