@@ -1,4 +1,5 @@
 import os
+import shelve
 from time import sleep
 
 import pytest
@@ -177,3 +178,34 @@ class TestHogwarts(Base):
         sleep(3)
         self.driver.find_element_by_id('stfile').send_keys('D:\\PycharmProjects\\SeleniumTest\\web\\resource\\80_80.png')
         sleep(3)
+
+
+    # 跳过扫码登录（调试运行或者cookie注入）
+    def test_wework(self):
+        # self.driver.find_element_by_id('menu_contacts').click()
+        # sleep(3)
+
+        self.driver.get('https://work.weixin.qq.com/')
+        # 创建或打开一个数据库
+        db = shelve.open("cookies")
+        # cookies = [{'domain': '.work.weixin.qq.com', 'httpOnly': False, 'name': 'Hm_lpvt_9364e629af24cb52acc78b43e8c9f77d', 'path': '/', 'secure': False, 'value': '1595836517'}, {'domain': '.work.weixin.qq.com', 'httpOnly': False, 'name': 'wxpay.vid', 'path': '/', 'secure': False, 'value': '1688853220984739'}, {'domain': '.work.weixin.qq.com', 'httpOnly': False, 'name': 'wxpay.corpid', 'path': '/', 'secure': False, 'value': '1970325091155963'}, {'domain': '.work.weixin.qq.com', 'httpOnly': True, 'name': 'wwrtx.ltype', 'path': '/', 'secure': False, 'value': '1'}, {'domain': '.work.weixin.qq.com', 'httpOnly': True, 'name': 'wwrtx.sid', 'path': '/', 'secure': False, 'value': 'SrN66FlX3PbFDvmRh1EI0WAM11fyeh2FltvBB8ZA8btuYsNEH_oKukX3hGH9FYOe'}, {'domain': '.work.weixin.qq.com', 'httpOnly': True, 'name': 'wwrtx.vst', 'path': '/', 'secure': False, 'value': 'Hm2Ds7Q3WiGy3D7qw1XZgwPXaHGUrMwFOHuKILj4HgfdTxB8NDJxKWxAqHzRkfcOJ73thtMEfiB3MECKMPr5ORYOPkDdlWb5_UXnOOSPARyGAAfOvAlsV3EfLmAS7049KIBTxSTy8h4C9UvqSbWL0cIU4ubkUMbKh7u_pYr_m5AnkKRUtINPIvdcqNKIRjd3XCUGIxozSGSPpG8gt63XvPS2sZdxPb76KcVTTbl2SL7taCgKB29qNRfUwYTNcEDKZRBC8Yrrq1ragv0VnqbWtA'}, {'domain': '.qq.com', 'expiry': 2147385600, 'httpOnly': False, 'name': 'pgv_pvi', 'path': '/', 'secure': False, 'value': '643790848'}, {'domain': 'work.weixin.qq.com', 'expiry': 1595867120, 'httpOnly': True, 'name': 'ww_rtkey', 'path': '/', 'secure': False, 'value': '4uogurj'}, {'domain': '.work.weixin.qq.com', 'httpOnly': True, 'name': 'wwrtx.ref', 'path': '/', 'secure': False, 'value': 'direct'}, {'domain': '.work.weixin.qq.com', 'httpOnly': False, 'name': 'wwrtx.vid', 'path': '/', 'secure': False, 'value': '1688853220984739'}, {'domain': '.qq.com', 'expiry': 2147483647, 'httpOnly': False, 'name': 'ptcz', 'path': '/', 'secure': False, 'value': '40e6bd2adb1990558177554c7614d2d63dfc0a580c50282b7a35d22a68625b38'}, {'domain': '.work.weixin.qq.com', 'expiry': 1595867120, 'httpOnly': False, 'name': 'wwrtx.c_gdpr', 'path': '/', 'secure': False, 'value': '0'}, {'domain': '.qq.com', 'expiry': 1595922921, 'httpOnly': False, 'name': '_gid', 'path': '/', 'secure': False, 'value': 'GA1.2.2054318020.1595835594'}, {'domain': '.work.weixin.qq.com', 'expiry': 1598428537, 'httpOnly': False, 'name': 'wwrtx.i18n_lan', 'path': '/', 'secure': False, 'value': 'zh-cn'}, {'domain': '.work.weixin.qq.com', 'expiry': 1627372517, 'httpOnly': False, 'name': 'Hm_lvt_9364e629af24cb52acc78b43e8c9f77d', 'path': '/', 'secure': False, 'value': '1595835620,1595836510,1595836517'}, {'domain': '.work.weixin.qq.com', 'httpOnly': False, 'name': 'wwrtx.d2st', 'path': '/', 'secure': False, 'value': 'a1268560'}, {'domain': '.work.weixin.qq.com', 'httpOnly': True, 'name': 'wwrtx.refid', 'path': '/', 'secure': False, 'value': '7204234252384120'}, {'domain': '.qq.com', 'expiry': 2147483647, 'httpOnly': False, 'name': 'RK', 'path': '/', 'secure': False, 'value': 'u3Jw8rEMW9'}, {'domain': '.qq.com', 'expiry': 1658908521, 'httpOnly': False, 'name': '_ga', 'path': '/', 'secure': False, 'value': 'GA1.2.349151564.1592991994'}, {'domain': '.qq.com', 'expiry': 2147385600, 'httpOnly': False, 'name': 'pgv_pvid', 'path': '/', 'secure': False, 'value': '6652736815'}]
+        # 将数据存储到shelve数据库
+        # db["cookies"] = cookies
+        # 取出数据
+        cookies = db['cookies']
+        db.close()
+        # 获取cookies
+        # print(self.driver.get_cookies())
+
+        # 把字典加入到driver的cookie中
+        for cookie in cookies:
+            if 'expiry' in cookie.keys():
+                cookie.pop('expiry')
+
+            self.driver.add_cookie(cookie)
+
+        self.driver.get('https://work.weixin.qq.com/wework_admin/frame#index')
+        self.driver.find_element_by_id('menu_contacts').click()
+        sleep(3)
+
+
