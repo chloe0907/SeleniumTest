@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.android.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class BasePage:
@@ -23,6 +24,13 @@ class BasePage:
         if self._base_url != "":
             self.driver.get(self._base_url)
 
-
     def find(self, by, locator):
         return self.driver.find_element(by, locator)
+
+    def finds(self, by, locator):
+        return self.driver.find_elements(by, locator)
+
+    def wait_for_condition(self, condition):
+        print(f"webdriver wait -------{condition}")
+        WebDriverWait(self.driver, 10).until(condition)
+        print("=====================webdriver end")
